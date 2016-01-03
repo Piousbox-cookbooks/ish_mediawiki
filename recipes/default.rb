@@ -1,9 +1,7 @@
 #
-# Author:: Seth Chisamore <schisamo@opscode.com>
+# Author:: piousbox
 # Cookbook Name:: mediawiki
 # Recipe:: default
-#
-# Copyright 2011, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,3 +15,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+# install apache2
+include_recipe("ish_apache::install_apache")
+
+# install php5
+include_recipe("php::default")
+
+# instasll mysql client
+
+# install mediawiki
+
