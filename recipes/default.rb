@@ -16,13 +16,67 @@
 # limitations under the License.
 #
 
-# install apache2
-include_recipe("ish_apache::install_apache")
+include_recipe "ish_apache::install_apache"
+include_recipe "php::default"
+include_recipe "apache2::mod_php5"
 
-# install php5
-include_recipe("php::default")
+%w{ mysql-client php5-mysql libapache2-mod-auth-mysql libapache2-mod-php5 awscli }.each do |pkg|
+  package pkg
+end
 
-# instasll mysql client
 
-# install mediawiki
+# configure
+app             = data_bag_item("apps", "wiki_wasya")
+user            = app['user'][node.chef_environment]
+aws_key         = app['aws_key']
+aws_secret      = app['aws_secret']
+backup_date     = app['backup_date']
+mysql_user      = node['mediawiki']['db']['user']
+mysql_password  = node['mediawiki']['db']['password']
+mysql_host      = node['mediawiki']['db']['host']
+mysql_database  = node['mediawiki']['db']['database']
 
+directory     "/home/#{user}/projects/wiki.tmp" do
+  action      :create
+  recursive   true
+  owner       user
+  group       user
+end
+
+
+execute    "download tarball" do
+  cwd      "/home/#{user}/projects"
+  command  <<-EOL
+rm -rf mediawiki && \
+# wget https://releases.wikimedia.org/mediawiki/1.26/mediawiki-1.26.2.tar.gz && \
+wget https://releases.wikimedia.org/mediawiki/1.23/mediawiki-1.23.0.tar.gz && \
+tar xvzf mediawiki-*.tar.gz -C wiki.tmp && \
+mv wiki.tmp/* mediawiki && \
+chown #{user} mediawiki -R && \
+rm -rf wiki.tmp mediawiki-*gz && \
+echo ok
+EOL
+end
+
+
+## configure
+template "/home/#{user}/projects/mediawiki/LocalSettings.php" do
+  source "LocalSettings.php.erb"
+  owner  user
+  group  user
+  mode   "0664"
+  variables({
+  })
+end
+
+
+execute   "restore data" do
+  cwd     "/home/#{user}/projects"
+  command <<-EOL
+rm #{backup_date}.wiki_cac.sql* && \
+AWS_ACCESS_KEY_ID=#{aws_key} AWS_SECRET_ACCESS_KEY=#{aws_secret} aws s3 cp s3://ish-backups/sql_backup/#{backup_date}.wiki_cac.sql.tar.gz .  --region us-west-1 && \
+tar -xvf #{backup_date}.wiki_cac.sql.tar.gz && \
+mysql -u #{mysql_user} -p#{mysql_password} -h #{mysql_host} #{mysql_database} < #{backup_date}.wiki_cac.sql && \
+echo ok
+EOL
+end

@@ -1,4 +1,7 @@
-mediawiki Cookbook
+
+[![Build Status](https://travis-ci.org/Piousbox-cookbooks/mediawiki.svg?branch=0.2.0)](https://travis-ci.org/Piousbox-cookbooks/mediawiki)
+
+Mediawiki Cookbook
 ==================
 To install mediawiki, add "recipe[mediawiki::defailt]" to the runlist.
 
