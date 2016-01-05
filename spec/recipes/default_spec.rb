@@ -12,6 +12,6 @@ describe "mediawiki::default" do
   it 'is sane' do
     true.should eql true
   end
-
+    
 end
 
