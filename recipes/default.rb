@@ -27,7 +27,6 @@ package "libapache2-mod-php5" do
   action [ :remove, :install ]
 end
 
-
 # configure
 app                 = data_bag_item("apps", "wiki_wasya")
 user                = app['user'][node.chef_environment]
@@ -42,6 +41,8 @@ wiki_version_short  = wiki_version.split(".")[0..1].join(".")
 restore_name        = app['restore_name'][node.chef_environment] # YYYYMMDD.db_name
 restore_path        = "ish-backups/sql_backup/#{restore_name}.sql.tar.gz"
 domain              = app['domains'][node.chef_environment][0]
+deploy_to           = "/home/#{user}/projects/mediawiki"
+
 
 directory     "/home/#{user}/projects/wiki.tmp" do
   action      :create
@@ -65,7 +66,7 @@ EOL
 end
 
 
-template "/home/#{user}/projects/mediawiki/LocalSettings.php" do
+template "#{deploy_to}/LocalSettings.php" do
   source "LocalSettings-#{wiki_version_short}.php.erb"
   owner  user
   group  user
@@ -92,4 +93,13 @@ tar -xvf #{restore_name}.sql.tar.gz && \
 mysql -u #{mysql_user} -p#{mysql_password} -h #{mysql_host} #{mysql_database} < #{restore_name}.sql && \
 echo ok
 EOL
+end
+
+#
+# Install foreground skin
+#
+execute "clone skin foreground" do
+  command "git clone https://github.com/thingles/foreground.git"
+  cwd "#{deploy_to}/skins"
+  not_if { ::File.exists?( "#{deploy_to}/skins/foreground" ) }
 end

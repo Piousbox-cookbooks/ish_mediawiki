@@ -80,7 +80,16 @@ SITE
     yum-mysql-community (0.1.21)
       yum (>= 3.2)
 
+PATH
+  remote: .
+  specs:
+    mediawiki (0.2.1)
+      ish_apache (>= 0.0.0)
+      mysql (>= 0.0.0)
+      php (>= 0.0.0)
+
 DEPENDENCIES
   ish (>= 0)
   ish_apache (>= 0)
+  mediawiki (>= 0)
 

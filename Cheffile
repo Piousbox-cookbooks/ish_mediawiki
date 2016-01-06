@@ -2,3 +2,4 @@ site "https://supermarket.getchef.com/api/v1"
 
 cookbook "ish"
 cookbook "ish_apache"
+cookbook "mediawiki", :path => "."
