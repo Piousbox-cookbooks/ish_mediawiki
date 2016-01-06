@@ -69,22 +69,6 @@ EOL
 end
 
 
-template "#{deploy_to}/LocalSettings.php" do
-  source "LocalSettings-#{wiki_version_short}.php.erb"
-  owner  user
-  group  user
-  mode   "0664"
-  variables({
-              :db_host            => mysql_host,
-              :db_user            => mysql_user,
-              :db_password        => mysql_password,
-              :db_name            => mysql_database,
-              :domain             => domain,
-              :default_skin       => default_skin,
-              :skins              => available_skins
-  })
-end
-
 
 execute   "restore data" do
   cwd     "/home/#{user}/projects"
@@ -111,9 +95,42 @@ execute "clone skin foreground" do
   not_if { ::File.exists?( "#{deploy_to}/skins/#{default_skin}" ) }
 end
 
+#
+# googleAnalytics
+#
+remote_file "#{deploy_to}/extensions/googleAnalytics.tar.gz" do
+  source "https://extdist.wmflabs.org/dist/extensions/googleAnalytics-REL1_26-d832801.tar.gz"
+  action :create
+end
+bash 'extract googleAnalytics' do
+  cwd "#{deploy_to}/extensions"
+  code <<-EOH
+tar -xvf googleAnalytics.tar.gz
+EOH
+end
 
 
 
+#
+# depends on googleAnalytics
+# depends on Foundation skin?
+#
+template "#{deploy_to}/LocalSettings.php" do
+  source "LocalSettings-#{wiki_version_short}.php.erb"
+  owner  user
+  group  user
+  mode   "0664"
+  variables({
+              :db_host                   => mysql_host,
+              :db_user                   => mysql_user,
+              :db_password               => mysql_password,
+              :db_name                   => mysql_database,
+              :domain                    => domain,
+              :default_skin              => default_skin,
+              :skins                     => available_skins,
+              :google_analytics_account  => app['google_analytics_account']
+  })
+end
 
 
 
