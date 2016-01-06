@@ -1,7 +1,7 @@
 #
-# Author:: piousbox
-# Cookbook Name:: mediawiki
-# Recipe:: default
+# Author::         piousbox
+# Cookbook Name::  mediawiki
+# Recipe::         default
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -103,3 +103,14 @@ execute "clone skin foreground" do
   cwd "#{deploy_to}/skins"
   not_if { ::File.exists?( "#{deploy_to}/skins/foreground" ) }
 end
+
+
+
+
+
+
+
+
+
+
+

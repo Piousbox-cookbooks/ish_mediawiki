@@ -25,10 +25,6 @@ describe "mediawiki::default" do
     end.converge(described_recipe)
   end
 
-  it 'is sane' do
-    true.should eql true
-  end
-
   it 'installs apache' do
     expect(chef_run).to include_recipe("ish_apache::install_apache")
   end

@@ -1,4 +1,4 @@
-name             'mediawiki'
+name             'ish_mediawiki'
 maintainer       'wasya.co'
 maintainer_email 'victor@wasya.co'
 license          'All rights reserved'
