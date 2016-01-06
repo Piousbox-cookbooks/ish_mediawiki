@@ -43,7 +43,9 @@ restore_name        = app['restore_name'][node.chef_environment] # YYYYMMDD.db_n
 restore_path        = "ish-backups/sql_backup/#{restore_name}.sql.tar.gz"
 domain              = app['domains'][node.chef_environment][0]
 deploy_to           = "/home/#{user}/projects/mediawiki"
-
+default_skin        = app['default_skin'][node.chef_environment] || node['default_skin']
+default_skin_repo   = app['default_skin_repo'][node.chef_environment] || node['default_skin_repo']
+available_skins     = [ default_skin ]
 
 directory     "/home/#{user}/projects/wiki.tmp" do
   action      :create
@@ -53,7 +55,7 @@ directory     "/home/#{user}/projects/wiki.tmp" do
 end
 
 
-execute    "download tarball" do
+execute    "download mediawiki tarball" do
   cwd      "/home/#{user}/projects"
   command  <<-EOL
 rm -rf mediawiki && \
@@ -73,11 +75,13 @@ template "#{deploy_to}/LocalSettings.php" do
   group  user
   mode   "0664"
   variables({
-              :db_host      => mysql_host,
-              :db_user      => mysql_user,
-              :db_password  => mysql_password,
-              :db_name      => mysql_database,
-              :domain       => domain
+              :db_host            => mysql_host,
+              :db_user            => mysql_user,
+              :db_password        => mysql_password,
+              :db_name            => mysql_database,
+              :domain             => domain,
+              :default_skin       => default_skin,
+              :skins              => available_skins
   })
 end
 
@@ -99,12 +103,12 @@ end
 
 
 #
-# Install foreground skin
+# Install skin
 #
 execute "clone skin foreground" do
-  command "git clone https://github.com/thingles/foreground.git"
+  command "git clone #{default_skin_repo}"
   cwd "#{deploy_to}/skins"
-  not_if { ::File.exists?( "#{deploy_to}/skins/foreground" ) }
+  not_if { ::File.exists?( "#{deploy_to}/skins/#{default_skin}" ) }
 end
 
 

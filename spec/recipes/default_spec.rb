@@ -11,7 +11,9 @@ describe "ish_mediawiki::default" do
       :databases => { :_default => { :username => 'some-username' } },
       :mediawiki_version => { :_default => '2.6' },
       :restore_name => { :_default => 'some-restore-name' },
-      :domains => { :_default => [] }
+      :domains => { :_default => [] },
+      :default_skin => { :_default => 'foreskin' },
+      :default_skin_repo => { :_default => 'some git repo' }
     }
     stub_data_bag_item("apps", "wiki_wasya").and_return( stubbed_data_bag )
     stub_command("/usr/sbin/apache2 -t").and_return(true)
@@ -32,6 +34,17 @@ describe "ish_mediawiki::default" do
   it 'installs packages' do
     %w{ awscli git }.each do |pkg|
       expect(chef_run).to install_package pkg
+    end
+  end
+
+  it 'downloads mediawiki tarball' do
+    # @TODO: spec this
+  end
+  
+  describe 'foreground skin' do
+    it 'installs' do
+      # @TODO: this is in serverspec right now.
+      # _vp_ 20160106
     end
   end
     
