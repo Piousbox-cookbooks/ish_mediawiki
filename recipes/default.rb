@@ -19,13 +19,14 @@
 include_recipe "ish_apache::install_apache"
 include_recipe "php::default"
 # include_recipe "apache2::mod_php5" # Apache is running a threaded MPM, but your PHP Module is not compiled to be threadsafe.  You need to recompile PHP.
-
-%w{ mysql-client php5-mysql libapache2-mod-auth-mysql libapache2-mod-php5 awscli }.each do |pkg|
+%w{ mysql-client php5-mysql libapache2-mod-auth-mysql libapache2-mod-php5 awscli git }.each do |pkg|
   package pkg
 end
 package "libapache2-mod-php5" do
   action [ :remove, :install ]
 end
+
+
 
 # configure
 app                 = data_bag_item("apps", "wiki_wasya")
@@ -94,6 +95,8 @@ mysql -u #{mysql_user} -p#{mysql_password} -h #{mysql_host} #{mysql_database} < 
 echo ok
 EOL
 end
+
+
 
 #
 # Install foreground skin

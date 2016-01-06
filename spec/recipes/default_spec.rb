@@ -1,7 +1,7 @@
 
 require 'spec_helper'
 
-describe "mediawiki::default" do
+describe "ish_mediawiki::default" do
 
   before :each do
     stubbed_data_bag = {
@@ -29,8 +29,10 @@ describe "mediawiki::default" do
     expect(chef_run).to include_recipe("ish_apache::install_apache")
   end
 
-  it 'installs awscli' do
-    expect(chef_run).to install_package "awscli"
+  it 'installs packages' do
+    %w{ awscli git }.each do |pkg|
+      expect(chef_run).to install_package pkg
+    end
   end
     
 end
