@@ -2,6 +2,12 @@
 
 This file is used to list changes made in each version of mediawiki.
 
+## 0.2.2:
+* foundation css is out again.
+
+## 0.2.1:
+* foundation css is in.
+
 ## 0.1.0:
 
 * Initial release of mediawiki

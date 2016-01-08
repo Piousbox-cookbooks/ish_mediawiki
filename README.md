@@ -1,5 +1,5 @@
 
-[![Build Status](https://travis-ci.org/Piousbox-cookbooks/mediawiki.svg?branch=0.2.0)](https://travis-ci.org/Piousbox-cookbooks/mediawiki)
+[![Build Status](https://travis-ci.org/Piousbox-cookbooks/ish_mediawiki.svg?branch=0.2.1)](https://travis-ci.org/Piousbox-cookbooks/ish_mediawiki)
 
 Mediawiki Cookbook
 ==================
